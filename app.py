@@ -54,8 +54,6 @@ def chat_bot(message, history):
 #
 # return desc, places.text, image
 
-chat_vis = False
-submit_int = True
 
 def on_click():
     desc, img = getDesc(str(place.value))
@@ -72,12 +70,13 @@ background_images = ['https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExYWxnbzk3
                      ]
 
 with gr.Blocks(title='Tourguide') as demo:
+    chat_vis = False
     gr.Markdown("""<h1>TourGuide</h1>""")
     gr.Markdown("""<h2>Your one spot to find plan next vacation!</h2>""", visible= not chat_vis)
     place = gr.Textbox(visible=not chat_vis)
     inputPrompt = gr.Textbox(lines=3, label="Custom Text Prompt", interactive=True, show_copy_button=True, visible= not chat_vis)
     radio = gr.Radio(label="Travelling Alone?", choices=['alone', 'group'], value='alone', visible=not chat_vis)
-    @gr.render(inputs=radio)
+    @gr.render(inputs=[radio])
     def group(choice, input_text=str(inputPrompt.value)):
         if choice=='group':
             with gr.Row(equal_height=True, visible= not chat_vis):
@@ -89,29 +88,9 @@ with gr.Blocks(title='Tourguide') as demo:
                 input_text += " travelling in a group of " + count
                 days = gr.Number(label='Number of Days', value=None, minimum=1)
                 input_text += f" for {days} number of days"
+        prompt = f"Help me with tour plan to visit {str(place.value)}"
+        gr.ChatInterface(fn=chat_bot, type="messages", examples=[prompt], fill_height=True)
 
-
-    prompt = f"Help me with tour plan to visit {str(place.value)}"
-    submit = gr.Button("Submit", interactive=submit_int, visible=not chat_vis)
-    submit.click(fn=on_click, inputs=[gr.ChatInterface(fn=chat_bot, type="messages", examples=[prompt], fill_height=True)])
-    # details = gr.Interface(inputs=[gr.Textbox(label="Place to visit", placeholder="Where would you like to go next?")])
-
-    # chat_css = ".gradio-container {background: url(" + background_images[random.randint(0, len(background_images) - 1)] + ")}"
-
-    # @gr.render(triggers=submit.click())
-    # def chatbot()
-    # chat bot here
-
-
-
-
-
-
-# demo = gr.Interface(fn=tourDetail, inputs=gr.Textbox(label="Where would you like to visit next?", placeholder='Enter a Place'), outputs=[gr.Textbox(label="Insights:", lines=2), gr.Textbox(label="Places to visit:", max_lines=8), gr.Image(label="")],
-#                     additional_inputs_accordion="Describe your Group (optional)",
-#                     additional_inputs=[,
-#                                        gr.Dropdown(label='Category', choices=['Business', 'Pleasure', 'Vacation'], value="" , allow_custom_value=True)],
-#                     css=css_code)
 
 if __name__ == "__main__":
     demo.launch()
