@@ -1,6 +1,5 @@
-gradio~=5.23.3
-pillow~=11.1.0
-python-dotenv~=1.1.0
-google~=3.0.0
+gradio
+pillow
+python-dotenv
+google
 google-genai
-huggingface_hub
