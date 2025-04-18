@@ -15,7 +15,17 @@ client = genai.Client(api_key=GEMINI_API_KEY)
 
 def chat_bot(message, history, system_prompt, model, max_output_tokens, temperature, top_p, top_k, stop_sequences):
     print(system_prompt)
-    response_modalities = ['Text', 'Image'] if model=="gemini-2.0-flash-exp-image-generation" else ['Text']
+    response_modalities = ['TEXT', 'IMAGE'] if model=="gemini-2.0-flash-exp-image-generation" else ['TEXT']
+    config = types.GenerateContentConfig(
+            max_output_tokens=max_output_tokens,
+            temperature=temperature,
+            stop_sequences=stop_sequences.split("-#-")[:5],
+            top_p=top_p,
+            top_k=top_k,
+            response_modalities=response_modalities
+        ) if stop_sequences else types.GenerateContentConfig(
+            response_modalities=response_modalities
+        )
     contents = [message["text"]]
     if message.get("files"):
         for file in message["files"]:
@@ -23,14 +33,7 @@ def chat_bot(message, history, system_prompt, model, max_output_tokens, temperat
     response = client.models.generate_content(
         model=model,
         contents=contents,
-        config=types.GenerateContentConfig(
-            max_output_tokens=max_output_tokens,
-            temperature=temperature,
-            stop_sequences=stop_sequences.split("###")[:5],
-            top_p=top_p,
-            top_k=top_k,
-            response_modalities=response_modalities
-        )
+        config=config
     )
     result = []
     for part in response.candidates[0].content.parts:
@@ -40,7 +43,7 @@ def chat_bot(message, history, system_prompt, model, max_output_tokens, temperat
             result.append(gr.Image(Image.open(BytesIO(part.inline_data.data))))
     return result
 
-sample_prompt = "Help me plan a tour to visit /Paris. I am traveling in a group of /x bachelors for /weekend."
+sample_prompt = "Help me plan a tour to visit New York. I am traveling alone for the weekend."
 
 chat_input = gr.MultimodalTextbox(interactive=True,
                                   file_count="multiple",
@@ -69,7 +72,7 @@ additional_inputs=[
             step=1,
             label="Top-k (nucleus sampling)",
         ),
-        gr.Textbox(value="", label="Stop Sequences", placeholder="Input the desired set of character list concatenated with '###' e.g. ['apple', 'mango'] as 'apple###mango'"),
+        gr.Textbox(value="", label="Stop Sequences", placeholder="Input the desired set of character list concatenated with '-#-' e.g. ['apple', 'mango'] as 'apple-#-mango'"),
     ]
 examples = [["Create a week vacation plan for a young couple to visit Paris","example-1", "gemini-2.0-flash", 800, 1.0, 0.95, 32, "field"],
             ["A family trip to Egypt, where to go, show photos","example-2", "gemini-2.0-flash-exp-image-generation", 1200, 0.5, 0.95, 40, "weather"]]
@@ -77,7 +80,7 @@ examples = [["Create a week vacation plan for a young couple to visit Paris","ex
 with gr.Blocks(title='Tourguide') as demo:
     gr.Markdown("""<h1>TourGuide</h1>""")
     gr.Markdown("""<h2>Your one spot to find plan next vacation!</h2>""" )
-    chatInf = gr.ChatInterface(fn=chat_bot, type="messages", editable=True, multimodal=True,
+    chatInf = gr.ChatInterface(fn=chat_bot, type="messages", multimodal=True,
                                textbox=chat_input, examples=examples, additional_inputs=additional_inputs)
 
 if __name__ == "__main__":
