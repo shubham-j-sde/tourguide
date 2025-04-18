@@ -54,6 +54,9 @@ Give a custom text/ image or audio file as prompt for Gemini Chatbot.
 
 Tourguide supports using varied Gemini Models by selecting desired in Additional Inputs, along with other [Configuration Parameters](https://ai.google.dev/gemini-api/docs/text-generation#configuration-parameters) supported by Gemini
 
+Users can also generate and save images for their prompt, or even edit input images. 
+All generated images include a SynthID watermark, and images in Google AI Studio include a visible watermark as well. More info [here](https://ai.google.dev/gemini-api/docs/image-generation).
+
 Supported [Gemini Models](https://ai.google.dev/gemini-api/docs/models):
 - Gemini 2.5 Flash Preview
 - Gemini 2.0 Flash Image Generation
@@ -92,4 +95,4 @@ Tourguide application supports all image/audio format MIME types supported by Ge
 
 Run `gradio app.py` in root of your repository to run Gradio in <b>hot reload mode</b>, learn more [here](https://www.gradio.app/guides/developing-faster-with-reload-mode).
 
-If your desired Gemini Model is not in the list, add in the [main](./app.py) file.
+If your desired Gemini Model is not in the list, add in the [main](./app.py#L54) file.
