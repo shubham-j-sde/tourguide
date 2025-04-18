@@ -43,6 +43,8 @@ If you are running on Windows, use `.\gradio-env\Scripts\activate` instead of th
 The application will automatically fetch `GEMINI_API_KEY` if present as system environment variable. to check this run `echo GEMINI_API_KEY` in your terminal.
 if it returns an empty string, set it in [.env](./.env) file.
 
+To generate/ setup a new key, refer to this [guide](https://ai.google.dev/gemini-api/docs/api-key#set-up-api-key).
+
 
 Run `python app.py` from the terminal at root of repository.
 
