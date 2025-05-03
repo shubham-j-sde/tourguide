@@ -4,7 +4,7 @@
 * [Tourguide](#tourguide)
   * [Installation](#installation)
   * [Run Application](#run-application)
-    * [Gemini Setup](#setup-gemini_api_key-)
+    * [Gemini Setup](#setup-gemini_api_key)
   * [User Guide](#user-guide)
   * [Development](#development)
 <!--TOC-->
